@@ -12,9 +12,13 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Load the module in your controller:
 
-    $ gem install restful_error
+```ruby
+class ApplicationController < ActionController::Base
+
+  include RestfulError::ActionController
+```
 
 ## Usage
 
