@@ -1,0 +1,3 @@
+module RestfulError
+  VERSION = "0.0.1"
+end

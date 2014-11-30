@@ -1,0 +1,12 @@
+ja:
+  restful_error:
+    active_record/record_not_found: Requested resource is not found
+    can_can/unauthorized: Unauthorized
+    bad_request: Bad request #400
+    unauthorized: Unauthorized #401
+    forbidden: Forbidden #403
+    not_found: Not found #404
+    method_not_allowed: Method not allowd #405
+    gone: Gone #410
+    internal_server_error: Internal server error #500
+    service_unavailable: Service unavailable #503
