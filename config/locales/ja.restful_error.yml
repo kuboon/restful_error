@@ -1,6 +1,6 @@
 ja:
   restful_error:
-    active_record/record_not_found: 要求されたリソースが存在しません!
+    active_record/record_not_found: 要求されたリソースが存在しません
     can_can/unauthorized: 権限がありません
     bad_request: 不正なリクエストです #400
     unauthorized: 権限がありません #401
