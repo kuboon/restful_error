@@ -8,5 +8,5 @@ ja:
     not_found: そのURLは存在しません #404
     method_not_allowed: メソッドは使用できません #405
     gone: 要求されたリソースは消滅しました #410
-    internal_server_error: サーバエラーです。 #500
+    internal_server_error: サーバエラーです #500
     service_unavailable: サービスが一時的に利用不可能になっています。しばらく時間をおいて、再度ご確認願います。 #503

@@ -40,10 +40,10 @@ get '/posts/new'
 #=> render 'restful_error/show.html' with @status_code and @message
 
 post '/posts.json'
-#=> { status: 401, message: "Sign in required"} or write your json at 'restful_error/show.json'
+#=> { status_code: 401, message: "Sign in required"} or write your json at 'restful_error/show.json'
 
 get '/session.xml'
-#=> "<error><status type="integer">401</status><message>Sign in required</message></error>" or write your xml at 'restful_error/show.xml'
+#=> "<error><status_code type="integer">401</status_code><message>Sign in required</message></error>" or write your xml at 'restful_error/show.xml'
 ```
 
 #### I18n
@@ -93,6 +93,7 @@ ja:
     active_record/record_not_found: 要求されたリソースが存在しません
 ```
 #### custom message
+
 ```ruby
 class RequireLogin < StandardError
   def initialize(provider = 'Unknown')
@@ -101,12 +102,11 @@ class RequireLogin < StandardError
   def status_code
     :unauthorized
   end
-  def message
+  def status_message
     I18n.t('restful_error.require_login', provider: provider)
   end
 end
 ```
-
 
 ## Contributing
 

@@ -23,11 +23,10 @@ module RestfulError
         @status_code = Rack::Utils.status_code(@exception.try(:status_code)).nonzero? || ActionDispatch::ExceptionWrapper.new(env, @exception).status_code
         raise if @status_code == 500 && Rails.configuration.consider_all_requests_local
 
-        @message = @exception.message
-        default_message = @exception.class.new.message rescue nil
-
-        if @message == default_message
-          reason_phrase_key = RestfulError.reason_phrase(@status_code).downcase.gsub(/\s|-/, '_').to_sym
+        @reason_phrase = RestfulError.reason_phrase(@status_code)
+        @message = @exception.try(:status_message)
+        unless @message
+          reason_phrase_key = @reason_phrase.downcase.gsub(/\s|-/, '_').to_sym
           @message = I18n.t @exception.class.name.underscore, default: [reason_phrase_key, @exception.class.name], scope: :restful_error
         end
 

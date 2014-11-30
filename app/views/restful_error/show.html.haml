@@ -1,4 +1,5 @@
 .page_header
   %h1
-    = @message
-    %small= @status_code
+    = @status_code
+    = @reason_phrase
+  %p= @message
