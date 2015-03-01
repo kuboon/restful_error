@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["kuboon"]
   spec.email         = ["ohkubo@magician.jp"]
   spec.summary       = %q{Define your error with status code. Raise it and you will get formatted response with i18nized message.}
-  spec.description   = %q{Define your error with status code. Raise it and you will get formatted response with i18nized message.}
-  spec.homepage      = ""
+  spec.description   = %q{Define status_code method on your error. Views and messages are fully customizable on rails way.}
+  spec.homepage      = "https://github.com/kuboon/restful_error"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -22,5 +22,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
-  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rspec", "~> 3"
 end
