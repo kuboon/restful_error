@@ -6,6 +6,8 @@ RestfulError = WEBrick::HTTPStatus
 load "restful_error/version.rb"
 require 'restful_error/engine'
 require 'restful_error/wrapper'
+require 'abstract_controller'
+require 'action_controller/metal'
 
 module RestfulError
   CodeToError.each do |_, klass|
@@ -42,5 +44,27 @@ module RestfulError
         render_exception ex
       end
     end
+  end
+
+  class ExceptionsController < ::ActionController::Metal
+    include AbstractController::Rendering
+    include ActionView::Layouts
+
+    append_view_path File.join(File.dirname(__FILE__), '../app/views')
+
+    def show
+      ex = env["action_dispatch.exception"]
+      @exception     = ex.extend(Helper)
+      ex.restful.set_env(env)
+      @status_code   = ex.restful.status_code
+      @reason_phrase = ex.restful.reason_phrase
+      @message       = ex.restful.message
+
+      self.status = @status_code
+      render 'restful_error/show'
+    end
+  end
+  def self.exceptions_app
+    ExceptionsController.action(:show)
   end
 end
