@@ -28,7 +28,7 @@ module RestfulError
   module ActionController
     def render_exception(ex)
       @exception     = ex.extend(Helper)
-      ex.restful.set_env(env)
+      ex.restful.set_env(request.env)
       @status_code   = ex.restful.status_code
       @reason_phrase = ex.restful.reason_phrase
       @message       = ex.restful.message
