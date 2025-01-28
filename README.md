@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/restful_error.svg)](https://badge.fury.io/rb/restful_error)
+
 # RestfulError
 
 Define your error with status code. Raise it and you will get formatted response with i18nized message.
