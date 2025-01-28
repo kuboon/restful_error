@@ -1,3 +1,4 @@
+require 'action_controller'
 require 'spec_helper'
 
 describe 'RestfulError' do
@@ -11,7 +12,7 @@ describe 'RestfulError' do
         env "action_dispatch.exception", RestfulError[404].new
       end
       it do
-        get '/hoge'
+        get '/404'
         expect(last_response.status).to eq 404
       end
     end

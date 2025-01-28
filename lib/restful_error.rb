@@ -4,7 +4,7 @@ require "rack/utils"
 require "restful_error/railtie" if defined? ActionController
 require "restful_error/status"
 
-I18n.load_path += Dir["#{File.expand_path("../config/locales")}/*.yml"]
+I18n.load_path += Dir["#{File.expand_path("../config/locales")}/*.yml"] if defined? I18n
 
 module RestfulError
   class BaseError < StandardError; end
@@ -35,7 +35,7 @@ module RestfulError
 
     def build_error_class_for(code)
       status = Status.new(code)
-      message = I18n.t status.symbol, default: status.reason_phrase, scope: :restful_error
+      message = defined?(I18n) ? I18n.t(status.symbol, default: status.reason_phrase, scope: :restful_error) : status.reason_phrase
       klass = Class.new(BaseError) do
         define_method(:http_status) { status.code }
         define_method(:restful) { status }

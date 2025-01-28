@@ -8,8 +8,8 @@ module RestfulError
       return word_.underscore if word_.respond_to?(:underscore)
 
       word = word_.dup
-      word = word.gsub!("::", "/")
-      word = word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
+      word.gsub!("::", "/")
+      word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
       word.tr!("-", "_")
       word.downcase!
     end

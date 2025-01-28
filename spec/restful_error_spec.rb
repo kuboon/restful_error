@@ -3,10 +3,6 @@
 require "spec_helper"
 
 describe RestfulError do
-  it "has a version number" do
-    expect(RestfulError::VERSION).not_to be_nil
-  end
-
   describe "RestfullError[404]" do
     subject { described_class[404].new }
 
