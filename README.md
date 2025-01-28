@@ -1,7 +1,5 @@
 # RestfulError
 
-[![Join the chat at https://gitter.im/kuboon/restful_error](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kuboon/restful_error?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 Define your error with status code. Raise it and you will get formatted response with i18nized message.
 
 ## Installation
@@ -14,17 +12,41 @@ And then execute:
 
     $ bundle
 
-Load the module in your controller:
-
-```ruby
-class ApplicationController < ActionController::Base
-
-  include RestfulError::ActionController
-```
-
 ## Usage
 
-### Simple
+### Pure ruby
+```ruby
+ex = RestfulError[404].new
+ex.restful.code # => 404
+ex.restful.reason_phrase # => "Not Found"
+```
+
+#### your custom error
+```ruby
+class ::NoSession < RestfulError[404]; end
+# or
+class ::NoSession < RestfulError::NotFound; end
+```
+#### duck typing
+```ruby
+class OAuthController < ApplicationController
+
+  # define http_status and include RestfulError::Helper
+  class PermissionError < StandardError
+    include RestfulError::Helper
+    def http_status = 401
+  end
+  # or
+  class PermissionError < StandardError
+    def http_status; :unauthorized; end
+  end
+end
+PermissionError.new.restful.symbol # => :unauthorized
+```
+
+### With Rails
+https://zenn.dev/kuboon/scraps/37773aa002b6cc
+
 #### raise me
 ```ruby
 class PostsController < ApplicationController
@@ -35,6 +57,7 @@ class PostsController < ApplicationController
   end
 end
 ```
+
 #### Multi format response
 
 ```ruby
@@ -42,7 +65,7 @@ get '/posts/new'
 #=> render 'restful_error/show.html' with @status_code and @message
 
 post '/posts.json'
-#=> { status_code: 401, message: "Sign in required"} or write your json at 'restful_error/show.json'
+#=> { status_code: 401, message: "Sign in required" } or write your json at 'restful_error/show.json'
 
 get '/session.xml'
 #=> "<error><status_code type="integer">401</status_code><message>Sign in required</message></error>" or write your xml at 'restful_error/show.xml'
@@ -55,28 +78,6 @@ ja:
   restful_error:
     unauthorized: ログインしてください #401
     not_found: ページが存在しません #404
-```
-
-### Advanced
-#### your custom error
-```ruby
-class ::NoSession < RestfulError[404]; end
-# or
-class ::NoSession < RestfulError::NotFound; end
-```
-#### duck typing
-```ruby
-class OAuthController < ApplicationController
-
-  # all you need is status_code
-  class RequireTwitterLogin < StandardError
-    def status_code; 401; end
-  end
-  # or
-  class RequireTwitterLogin < StandardError
-    def status_code; :unauthorized; end
-  end
-end
 ```
 
 #### library defined error
@@ -104,7 +105,7 @@ class RequireLogin < StandardError
   def status_code
     :unauthorized
   end
-  def status_message
+  def response_message
     I18n.t('restful_error.require_login', provider: provider)
   end
 end

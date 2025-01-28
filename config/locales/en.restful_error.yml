@@ -6,7 +6,8 @@ ja:
     unauthorized: Unauthorized #401
     forbidden: Forbidden #403
     not_found: Not found #404
-    method_not_allowed: Method not allowd #405
+    method_not_allowed: Requested HTTP Method is not allowd #405
     gone: Gone #410
+    unprocessable_content: Content is readable but unprocessable #422
     internal_server_error: Internal server error #500
     service_unavailable: Service unavailable #503

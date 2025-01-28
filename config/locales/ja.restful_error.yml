@@ -2,11 +2,12 @@ ja:
   restful_error:
     active_record/record_not_found: 要求されたリソースが存在しません
     can_can/unauthorized: 権限がありません
-    bad_request: 不正なリクエストです #400
+    bad_request: 不正なリクエスト #400
     unauthorized: 権限がありません #401
     forbidden: そのURLへのアクセスは禁止されています #403
     not_found: そのURLは存在しません #404
-    method_not_allowed: メソッドは使用できません #405
+    method_not_allowed: その HTTP method は使用できません #405
     gone: 要求されたリソースは消滅しました #410
+    unprocessable_content: コンテンツを読みましたが処理できません #422
     internal_server_error: サーバエラーです #500
     service_unavailable: サービスが一時的に利用不可能になっています。しばらく時間をおいて、再度ご確認願います。 #503
