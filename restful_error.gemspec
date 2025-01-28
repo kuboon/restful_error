@@ -7,7 +7,7 @@ require "restful_error/version"
 Gem::Specification.new do |spec|
   spec.name = "restful_error"
   spec.version = RestfulError::VERSION
-  spec.required_ruby_version = ">= 3.3"
+  spec.required_ruby_version = ">= 3.1"
   spec.authors = [ "kuboon" ]
   spec.email = [ "o@kbn.one" ]
   spec.summary = "Define your error with status code. Raise it and you will get formatted response with i18nized message."
