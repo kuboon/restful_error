@@ -23,13 +23,13 @@ ex.restful.code # => 404
 ex.restful.reason_phrase # => "Not Found"
 ```
 
-#### your custom error
+#### your custom error by subclassing
 ```ruby
 class ::NoSession < RestfulError[404]; end
 # or
 class ::NoSession < RestfulError::NotFound; end
 ```
-#### duck typing
+#### your custom error with http_status
 ```ruby
 class OAuthController < ApplicationController
 
@@ -40,16 +40,17 @@ class OAuthController < ApplicationController
   end
   # or
   class PermissionError < StandardError
+    include RestfulError::Helper
     def http_status; :unauthorized; end
   end
 end
-PermissionError.new.restful.symbol # => :unauthorized
+PermissionError.new.restful.reason_phrase # => "Unauthorized"
 ```
 
 ### With Rails
-https://zenn.dev/kuboon/scraps/37773aa002b6cc
+`config.exceptions_app` will automatically set.
 
-#### raise me
+#### raise me in request
 ```ruby
 class PostsController < ApplicationController
   before_action do
@@ -59,6 +60,7 @@ class PostsController < ApplicationController
   end
 end
 ```
+
 
 #### Multi format response
 
