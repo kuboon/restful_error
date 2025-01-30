@@ -37,3 +37,23 @@ jobs:
       env:
         OWNER: ${{ github.repository_owner }}
         GEM_HOST_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Get Tag Name
+      run: |
+        TAG_NAME=$(ruby -e 'require_relative "lib/restful_error/version"; puts "v#{RestfulError::VERSION}"')
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+    - name: Create Tag
+      run: |
+        git tag $TAG_NAME
+        git push origin $TAG_NAME
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        release_name: Release ${{ env.TAG_NAME }}
+        draft: false
+        prerelease: false
