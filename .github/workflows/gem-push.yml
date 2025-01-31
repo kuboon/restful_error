@@ -31,7 +31,7 @@ jobs:
       run: |
         if git tag | grep -q $TAG_NAME; then
           echo "$TAG_NAME already released. skip."
-          exit 1
+          exit 0
         fi
 
     - name: build
