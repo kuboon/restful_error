@@ -12,7 +12,7 @@ jobs:
     name: Build + Publish
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -50,6 +50,8 @@ jobs:
 
     - name: Create Tag
       run: |
+        git config user.email "o@kbn.one"
+        git config user.name "github action"
         git tag $TAG_NAME
         git push origin $TAG_NAME
 
