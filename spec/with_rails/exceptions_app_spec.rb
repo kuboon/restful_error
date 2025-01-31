@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require "spec_helper"
 require "action_controller"
-require "restful_error/railtie"
+require "i18n"
+require "spec_helper"
+require "restful_error/railtie" # require again for run after restful_error_spec
 
 RSpec.describe RestfulError::ExceptionsController do
   include Rack::Test::Methods
@@ -22,7 +23,7 @@ RSpec.describe RestfulError::ExceptionsController do
       context 'default message' do
         let(:exception) { described_class.new }
         it do
-          expect(json).to eq({status_code: 404, reason_phrase: "Not Found", response_message: ""}.stringify_keys)
+          expect(json).to eq({status_code: 404, reason_phrase: "Not Found", response_message: 'Page not found'}.stringify_keys)
           expect(last_response.status).to eq status_code
         end
       end
@@ -39,7 +40,7 @@ RSpec.describe RestfulError::ExceptionsController do
     let(:status_code) { 404 }
     include_context "json" do
       it do
-        expect(json).to eq({status_code:, reason_phrase: "Not Found", response_message: ""}.stringify_keys)
+        expect(json).to eq({status_code:, reason_phrase: "Not Found", response_message: 'Requested resource is not found'}.stringify_keys)
         expect(last_response.status).to eq status_code
       end
     end

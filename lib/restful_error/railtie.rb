@@ -14,12 +14,7 @@ module RestfulError
       status = RestfulError.build_status_from_symbol_or_code(code)
       @status_code = status.code
       @reason_phrase = status.reason_phrase
-      @response_message = @exception.try(:response_message)
-      unless @response_message
-        class_name = @exception.class.name
-        class_key = RestfulError::Inflector.underscore(class_name)
-        @response_message = I18n.t class_key, default: [ status.symbol, '' ], scope: :restful_error
-      end
+      @response_message = @exception.try(:response_message) || RestfulError.localized_phrase(@exception.class.name, status) || nil
 
       self.status = status.code
       render "restful_error/show", formats: request.format.symbol

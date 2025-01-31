@@ -1,11 +1,12 @@
-ja:
+en:
   restful_error:
     active_record/record_not_found: Requested resource is not found
+    action_controller/routing_error: Requested resource is not found
     can_can/unauthorized: Unauthorized
     bad_request: Bad request #400
     unauthorized: Unauthorized #401
     forbidden: Forbidden #403
-    not_found: Not found #404
+    not_found: Page not found #404
     method_not_allowed: Requested HTTP Method is not allowd #405
     gone: Gone #410
     unprocessable_content: Content is readable but unprocessable #422

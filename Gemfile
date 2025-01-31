@@ -6,8 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
-  gem "actionpack"
-  gem "bundler"
+  gem "actionpack", require: false
   gem "debug"
   gem "rake"
   gem "rspec"

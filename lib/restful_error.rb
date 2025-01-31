@@ -5,22 +5,25 @@ require "restful_error/railtie" if defined? ActionController
 require "restful_error/status"
 require "restful_error/version"
 
-I18n.load_path += Dir["#{File.expand_path("../config/locales")}/*.yml"] if defined? I18n
-
 module RestfulError
-  class BaseError < StandardError
-    attr_reader :response_message
-    def initialize(message = nil)
-      @response_message = message
-      super
+  module Helper
+    def restful
+      @restful ||= begin
+        raise NotImplementedError, "http_status must be implemented by including class" unless respond_to?(:http_status)
+        RestfulError.build_status_from_symbol_or_code(http_status)
+      end
+    end
+    def response_message
+      return @response_message unless @response_message.nil?
+      @response_message = RestfulError.localized_phrase(self.class.name, restful)
     end
   end
 
-  module Helper
-    def restful
-      raise NotImplementedError, "http_status must be implemented by including class" unless respond_to?(:http_status)
-
-      @restful ||= RestfulError.build_status_from_symbol_or_code(http_status)
+  class BaseError < StandardError
+    include RestfulError::Helper
+    def initialize(message = nil)
+      @response_message = message
+      super
     end
   end
 
@@ -38,10 +41,21 @@ module RestfulError
       @cache[status.code] ||= build_error_class_for(status)
     end
 
+    def init_i18n
+      return if @init_i18n
+      I18n.load_path += Dir["#{File.expand_path("./config/locales")}/*.yml"]
+      @init_i18n = true
+    end
+    def localized_phrase(class_name, status)
+      return false unless defined?(I18n)
+      init_i18n
+      class_key = RestfulError::Inflector.underscore(class_name)
+      I18n.t class_key, default: [status.symbol, false], scope: :restful_error
+    end
+
     private
 
     def build_error_class_for(status)
-      message = defined?(I18n) ? I18n.t(status.symbol, default: status.reason_phrase, scope: :restful_error) : status.reason_phrase
       klass = Class.new(BaseError) do
         define_method(:http_status) { status.code }
         define_method(:restful) { status }
