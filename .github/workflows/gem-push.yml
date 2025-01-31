@@ -22,6 +22,18 @@ jobs:
       with:
         ruby-version: 3.3
 
+    - name: Get Local Tag Name
+      run: |
+        TAG_NAME=$(ruby -e 'require_relative "lib/restful_error/version"; puts "v#{RestfulError::VERSION}"')
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+    - name: Check already released
+      run: |
+        if git tag | grep -q $TAG_NAME; then
+          echo "$TAG_NAME already released. skip."
+          exit 1
+        fi
+
     - name: build
       run: gem build *.gemspec
 
@@ -35,11 +47,6 @@ jobs:
       env:
         OWNER: ${{ github.repository_owner }}
         GEM_HOST_API_KEY: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Get Tag Name
-      run: |
-        TAG_NAME=$(ruby -e 'require_relative "lib/restful_error/version"; puts "v#{RestfulError::VERSION}"')
-        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
     - name: Create Tag
       run: |
