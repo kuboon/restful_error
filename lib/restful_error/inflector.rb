@@ -12,6 +12,7 @@ module RestfulError
       word.gsub!(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_")
       word.tr!("-", "_")
       word.downcase!
+      word
     end
 
     def camelize(word_)
@@ -21,6 +22,7 @@ module RestfulError
       word.sub!(/^[a-z\d]*/) { ::Regexp.last_match(0).capitalize }
       word.gsub!(%r{(?:_|(/))([a-z\d]*)}) { "#{Regexp.last_match(1)}#{Regexp.last_match(2).capitalize}" }
       word.gsub!("/", "::")
+      word
     end
   end
 end

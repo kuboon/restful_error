@@ -24,7 +24,7 @@ jobs:
 
     - name: Get Local Tag Name
       run: |
-        TAG_NAME=$(ruby -e 'require_relative "lib/restful_error/version"; puts "v#{RestfulError::VERSION}"')
+        TAG_NAME=$(ruby -I. -r lib/restful_error/version -e 'puts "v#{RestfulError::VERSION}"')
         echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
     - name: Check already released

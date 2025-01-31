@@ -10,18 +10,19 @@ module RestfulError
 
     def show
       @exception = request.env["action_dispatch.exception"]
-      status = Status.new(request.path_info[1..].to_i)
+      code = request.path_info[1..].to_i
+      status = RestfulError.build_status_from_symbol_or_code(code)
       @status_code = status.code
       @reason_phrase = status.reason_phrase
-      @message = @exception.try(:response_message)
-      unless @message
+      @response_message = @exception.try(:response_message)
+      unless @response_message
         class_name = @exception.class.name
         class_key = RestfulError::Inflector.underscore(class_name)
-        @message = I18n.t class_key, default: [ status.symbol, @reason_phrase ], scope: :restful_error
+        @response_message = I18n.t class_key, default: [ status.symbol, '' ], scope: :restful_error
       end
 
       self.status = status.code
-      render "restful_error/show"
+      render "restful_error/show", formats: request.format.symbol
     end
   end
 
