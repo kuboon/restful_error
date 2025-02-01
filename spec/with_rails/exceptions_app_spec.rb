@@ -9,7 +9,7 @@ RSpec.describe "exceptions_app" do
   def app = RestfulError::ExceptionsApp
 
   shared_context "html" do
-    let(:request) { get "/#{status_code}" }
+    let(:request) { get "/#{status_code}", {}, 'HTTP_ACCEPT' => 'text/html' }
     let(:body) { request; last_response.body }
   end
   shared_context "json" do
@@ -22,16 +22,19 @@ RSpec.describe "exceptions_app" do
   end
   describe RestfulError[404] do
     let(:status_code) { 404 }
-    include_context "html" do
+    context 'html' do
+      include_context "html"
       context 'default message' do
         let(:exception) { described_class.new }
         it do
-          expect(body).to include "Page not found"
+          expect(body).to include "<p>Page not found</p>"
+          expect(body).to include "</html>" # layout is rendered
           expect(last_response.status).to eq status_code
         end
       end
     end
-    include_context "json" do
+    context 'json' do
+      include_context "json"
       context 'default message' do
         let(:exception) { described_class.new }
         it do
