@@ -2,26 +2,38 @@ require "abstract_controller"
 require "action_controller/metal"
 
 module RestfulError
-  class ExceptionsController < ::ActionController::Metal
-    include AbstractController::Rendering
-    include ActionView::Layouts
-    include ActionController::Rendering
+  class ExceptionsApp
+    Config = Struct.new(:enable, :inherit_from, :fallback)
+    def self.config
+      Config.new.tap do |config|
+        config.enable = true
+        config.inherit_from = "::ApplicationController"
+      end
+    end
 
-    def self.controller_path = "restful_error"
-    append_view_path File.join(File.dirname(__FILE__), "../../app/views")
-    layout nil
+    def initialize(config = self.class.config)
+      @config = config
+    end
+    def call(env)
+      return @config.fallback.call(env) unless @config.enable
+      app.call(env)
+    rescue Exception => _e
+      raise unless @config.fallback
+      @config.fallback.call(env)
+    end
 
-    def show
-      @exception = request.env["action_dispatch.exception"]
-      code = request.path_info[1..].to_i
-      status = RestfulError.build_status_from_symbol_or_code(code)
-      @status_code = status.code
-      @reason_phrase = status.reason_phrase
-      @response_message = @exception.try(:response_message) || RestfulError.localized_phrase(@exception.class.name, status) || nil
-
-      render status: status.code, formats: request.format.symbol
+    def app
+      @app ||= begin
+        # To use "layouts/application" we need inherit from ::ApplicationController
+        # It is not defined at config time, so we need to load it here
+        if @config.inherit_from && Object.const_defined?(@config.inherit_from)
+          inherit_from = @config.inherit_from.constantize
+        else
+          inherit_from = RestfulError::ApplicationController
+        end
+        RestfulError.const_set("SuperController", inherit_from)
+        ExceptionsController.action(:show)
+      end
     end
   end
-
-  ExceptionsApp = ExceptionsController.action(:show)
 end

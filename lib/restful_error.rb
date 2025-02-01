@@ -3,9 +3,13 @@
 require "rack/utils"
 require "restful_error/status"
 require "restful_error/version"
+require "restful_error/railtie" if defined? Rails::Railtie
 
 module RestfulError
   autoload :ExceptionsApp, "restful_error/exceptions_app"
+  autoload :ApplicationController, "restful_error/application_controller"
+  autoload :ExceptionsController, "restful_error/exceptions_controller"
+
   module Helper
     def restful
       @restful ||= begin
