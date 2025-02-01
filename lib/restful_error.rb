@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require "rack/utils"
-require "restful_error/railtie" if defined? ActionController
 require "restful_error/status"
 require "restful_error/version"
 
 module RestfulError
+  autoload :ExceptionsApp, "restful_error/exceptions_app"
   module Helper
     def restful
       @restful ||= begin

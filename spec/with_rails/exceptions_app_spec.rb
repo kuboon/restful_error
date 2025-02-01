@@ -3,12 +3,15 @@
 require "action_controller"
 require "i18n"
 require "spec_helper"
-require "restful_error/railtie" # require again for run after restful_error_spec
 
-RSpec.describe RestfulError::ExceptionsController do
+RSpec.describe "exceptions_app" do
   include Rack::Test::Methods
-  def app = RestfulError.exceptions_app
+  def app = RestfulError::ExceptionsApp
 
+  shared_context "html" do
+    let(:request) { get "/#{status_code}" }
+    let(:body) { request; last_response.body }
+  end
   shared_context "json" do
     let(:request) { get "/#{status_code}", {}, 'HTTP_ACCEPT' => 'application/json' }
     let(:json) { request; JSON.parse(last_response.body) }
@@ -19,6 +22,15 @@ RSpec.describe RestfulError::ExceptionsController do
   end
   describe RestfulError[404] do
     let(:status_code) { 404 }
+    include_context "html" do
+      context 'default message' do
+        let(:exception) { described_class.new }
+        it do
+          expect(body).to include "Page not found"
+          expect(last_response.status).to eq status_code
+        end
+      end
+    end
     include_context "json" do
       context 'default message' do
         let(:exception) { described_class.new }

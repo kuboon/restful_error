@@ -21,7 +21,5 @@ module RestfulError
     end
   end
 
-  def self.exceptions_app
-    ExceptionsController.action(:show)
-  end
+  ExceptionsApp = ExceptionsController.action(:show)
 end
