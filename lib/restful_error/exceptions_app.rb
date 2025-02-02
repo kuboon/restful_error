@@ -5,7 +5,7 @@ module RestfulError
   class ExceptionsApp
     Config = Struct.new(:enable, :inherit_from, :fallback)
     def self.config
-      Config.new.tap do |config|
+      @config ||= Config.new.tap do |config|
         config.enable = true
         config.inherit_from = "::ApplicationController"
       end
