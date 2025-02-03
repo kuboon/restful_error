@@ -7,7 +7,7 @@ module RestfulError
 
     def show
       @exception = request.env["action_dispatch.exception"]
-      code = request.path_info[1..].to_i
+      code = @exception.try(:http_status) || request.path_info[1..].to_i
       status = RestfulError.build_status_from_symbol_or_code(code)
       @status_code = status.code
       @reason_phrase = status.reason_phrase
