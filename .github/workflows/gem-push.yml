@@ -7,8 +7,31 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      tag_name: ${{ steps.get_tag.outputs.TAG_NAME }}
+    steps:
+    - uses: actions/checkout@v4
+    - id: get_tag
+      name: Get Local Tag Name
+      run: |
+        TAG_NAME=$(ruby -I. -r lib/restful_error/version -e 'puts "v#{RestfulError::VERSION}"')
+        if git fetch --depth 1 origin tag $TAG_NAME; then
+          echo "::notice::$TAG_NAME already released. skip publishing."
+          exit 0
+        fi
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
+
   build:
-    needs: test
+    needs:
+    - test
+    - check
+    if: needs.check.outputs.tag_name
+    env:
+      TAG_NAME: ${{ needs.check.outputs.tag_name }}
     name: Build + Publish
     runs-on: ubuntu-latest
     permissions:
@@ -17,46 +40,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-tags: 'true'
     - name: Set up Ruby 3.3
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.3
-
-    - name: Get Local Tag Name
-      run: |
-        TAG_NAME=$(ruby -I. -r lib/restful_error/version -e 'puts "v#{RestfulError::VERSION}"')
-        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-
-    - id: check
-      name: Check already released
-      run: |
-        if git fetch --depth 1 origin tag $TAG_NAME; then
-          echo "$TAG_NAME already released. skip."
-          exit 0
-        fi
-        echo "deploy=true" >> $GITHUB_OUTPUT
-
     - name: build
-      if: steps.check.outputs.deploy == 'true'
       run: gem build *.gemspec
 
     - name: Publish to RubyGems
-      if: steps.check.outputs.deploy == 'true'
       run: gem push *.gem
       env:
         GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
 
     - name: Publish to GPR
-      if: steps.check.outputs.deploy == 'true'
       run: gem push --host https://rubygems.pkg.github.com/${OWNER} *.gem
       env:
         OWNER: ${{ github.repository_owner }}
         GEM_HOST_API_KEY: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create Tag
-      if: steps.check.outputs.deploy == 'true'
       run: |
         git config user.email "o@kbn.one"
         git config user.name "github action"
@@ -64,7 +66,6 @@ jobs:
         git push origin $TAG_NAME
 
     - name: Create Release
-      if: steps.check.outputs.deploy == 'true'
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
