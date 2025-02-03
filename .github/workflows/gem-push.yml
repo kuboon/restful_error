@@ -64,13 +64,3 @@ jobs:
         git config user.name "github action"
         git tag $TAG_NAME
         git push origin $TAG_NAME
-
-    - name: Create Release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.TAG_NAME }}
-        release_name: Release ${{ env.TAG_NAME }}
-        draft: false
-        prerelease: false
