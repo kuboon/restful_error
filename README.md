@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/restful_error.svg)](https://badge.fury.io/rb/restful_error)
+[![Gem Version](https://img.shields.io/gem/v/restful_error)](https://rubygems.org/gems/restful_error)
 
 # RestfulError
 
