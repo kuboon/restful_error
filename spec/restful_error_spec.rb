@@ -8,7 +8,7 @@ describe RestfulError do
 
     it do
       expect(subject.http_status).to eq 404
-      expect(subject.restful.reason_phrase).to eq "Not Found"
+      expect(subject.status_data.reason_phrase).to eq "Not Found"
     end
   end
 
@@ -17,7 +17,7 @@ describe RestfulError do
 
     it do
       expect(subject.http_status).to eq 400
-      expect(subject.restful.reason_phrase).to eq "Bad Request"
+      expect(subject.status_data.reason_phrase).to eq "Bad Request"
     end
   end
 
@@ -26,7 +26,7 @@ describe RestfulError do
 
     it do
       expect(subject.http_status).to eq 403
-      expect(subject.restful.reason_phrase).to eq "Forbidden"
+      expect(subject.status_data.reason_phrase).to eq "Forbidden"
     end
   end
 
@@ -41,7 +41,7 @@ describe RestfulError do
     end
 
     it do
-      expect(subject.restful.symbol).to eq :not_found
+      expect(subject.status_data.symbol).to eq :not_found
     end
   end
 end

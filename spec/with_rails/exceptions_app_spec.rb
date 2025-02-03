@@ -43,9 +43,15 @@ RSpec.describe "exceptions_app" do
         end
       end
       context 'custom message' do
-        let(:exception) { described_class.new("custom message") }
+        let(:klass) do
+          Class.new(described_class) do
+            def response_message = "custom message"
+          end
+        end
+        let(:exception) { klass.new }
         it do
-          expect(json).to eq({status_code:, reason_phrase: "Not Found", response_message: "custom message"}.stringify_keys)
+          expect(json).to eq({status_code: 404, reason_phrase: "Not Found", response_message: 'custom message'}.stringify_keys)
+          expect(last_response.status).to eq status_code
         end
       end
     end

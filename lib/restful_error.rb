@@ -11,20 +11,20 @@ module RestfulError
   autoload :ExceptionsController, "restful_error/exceptions_controller"
 
   module Helper
-    def restful
-      @restful ||= begin
-        raise NotImplementedError, "http_status must be implemented by including class" unless respond_to?(:http_status)
-        RestfulError.build_status_from_symbol_or_code(http_status)
-      end
+    def status_data
+      @status_data ||= RestfulError.build_status_from_symbol_or_code(http_status)
     end
     def response_message
       return @response_message unless @response_message.nil?
-      @response_message = RestfulError.localized_phrase(self.class.name, restful)
+      @response_message = RestfulError.localized_phrase(self.class.name, status_data)
     end
   end
 
   class BaseError < StandardError
     include RestfulError::Helper
+    def http_status
+      raise NotImplementedError, "http_status must be implemented"
+    end
   end
 
   @cache = {}
@@ -58,7 +58,7 @@ module RestfulError
     def build_error_class_for(status)
       klass = Class.new(BaseError) do
         define_method(:http_status) { status.code }
-        define_method(:restful) { status }
+        define_method(:status_data) { status }
       end
       const_set(status.const_name, klass)
       if defined? ActionDispatch::ExceptionWrapper

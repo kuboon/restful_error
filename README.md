@@ -26,13 +26,13 @@ RestfulError::BaseError === ex # => true
 
 RestfulError[404] == RestfulError::NotFound # => true # same class
 
-ex.restful # returns Data about status code
+ex.status_data # returns Data about status code
 # => #<data RestfulError::Status
 #      code=404,
 #      reason_phrase="Not Found",
 #      symbol=:not_found,
 #      const_name="NotFound">
-ex.restful.code # => 404
+ex.status_data.code # => 404
 ```
 
 #### Custom error by subclassing
@@ -49,7 +49,7 @@ class User::PermissionError < StandardError
   include RestfulError::Helper
   def http_status = :unauthorized # or 401
 end
-User::PermissionError.new.restful.reason_phrase # => "Unauthorized"
+User::PermissionError.new.status_data.reason_phrase # => "Unauthorized"
 ```
 
 ### With I18n
