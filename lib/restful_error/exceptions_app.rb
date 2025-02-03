@@ -15,12 +15,13 @@ module RestfulError
       @config = config
     end
     def call(env)
-      return @config.fallback.call(env) unless @config.enable
       app.call(env)
     rescue Exception => _e
       raise unless @config.fallback
       @config.fallback.call(env)
     end
+
+    private
 
     def app
       @app ||= begin
@@ -31,9 +32,13 @@ module RestfulError
         else
           inherit_from = RestfulError::ApplicationController
         end
-        RestfulError.const_set("SuperController", inherit_from)
+        const_set_without_warn(RestfulError, "SuperController", inherit_from)
         ExceptionsController.action(:show)
       end
+    end
+    def const_set_without_warn(klass, const_name, value)
+      klass.send(:remove_const, const_name) if klass.const_defined?(const_name)
+      klass.const_set(const_name, value)
     end
   end
 end

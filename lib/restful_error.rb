@@ -25,10 +25,6 @@ module RestfulError
 
   class BaseError < StandardError
     include RestfulError::Helper
-    def initialize(message = nil)
-      @response_message = message
-      super
-    end
   end
 
   @cache = {}
