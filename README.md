@@ -68,7 +68,7 @@ AnotherPermissionError.new.response_message # => "ログインが必要です"
 ```
 
 ### With Rails
-`config.exceptions_app` will automatically set to RestfulError::ExceptionsApp.
+`config.exceptions_app` [[guide]](https://guides.rubyonrails.org/configuring.html#config-exceptions-app) will automatically set to RestfulError::ExceptionsApp.
 
 If you want to disable it, you have two options.
 - `config.restful_error.exceptions_app.enable = false` (will not set exceptions_app)
@@ -84,10 +84,10 @@ class PostsController < ApplicationController
   end
 end
 ```
-
+If you want to check the output on development env, you need to set `config.consider_all_requests_local = false` and ensure `show_detailed_exceptions? == false` [[guide]](https://guides.rubyonrails.org/configuring.html#config-consider-all-requests-local)
 
 #### Render response
-Default view files are in https://github.com/kuboon/restful_error/tree/main/app/views/restful_error
+Default view files are in [app/views/restful_error](app/views/restful_error)
 
 `html`, `json` and `xml` are supported.
 
@@ -107,8 +107,8 @@ You can assign status code to error classes which are not yours. (This is Rails 
 config.action_dispatch.rescue_responses["Pundit::NotAuthorizedError"] = :unauthorized # or 401
 ```
 
-RestfulError will use this configuration to lookup status code and
-`@response_message` will be set.
+RestfulError will use these configurations to lookup status code and
+`@response_message` will be set on `exceptions_app`.
 
 ```yaml
 ja:
