@@ -2,19 +2,21 @@
 
 require "action_controller"
 require "i18n"
+require "json"
 require "spec_helper"
 
 RSpec.describe "exceptions_app" do
   include Rack::Test::Methods
   def app = RestfulError::ExceptionsApp.new
 
+  let(:body) { request; last_response.body }
+
   shared_context "html" do
     let(:request) { get "/#{status_code}", {}, 'HTTP_ACCEPT' => 'text/html' }
-    let(:body) { request; last_response.body }
   end
   shared_context "json" do
     let(:request) { get "/#{status_code}", {}, 'HTTP_ACCEPT' => 'application/json' }
-    let(:json) { request; JSON.parse(last_response.body) }
+    let(:json) { JSON.parse(body) }
   end
 
   before do
@@ -22,10 +24,10 @@ RSpec.describe "exceptions_app" do
   end
   describe RestfulError[404] do
     let(:status_code) { 404 }
+    let(:exception) { described_class.new }
     context 'html' do
       include_context "html"
       context 'default message' do
-        let(:exception) { described_class.new }
         it do
           expect(body).to include "<p>Page not found</p>"
           # expect(body).to include "</html>" # layout is rendered
@@ -36,7 +38,6 @@ RSpec.describe "exceptions_app" do
     context 'json' do
       include_context "json"
       context 'default message' do
-        let(:exception) { described_class.new }
         it do
           expect(json).to eq({status_code: 404, reason_phrase: "Not Found", response_message: 'Page not found'}.stringify_keys)
           expect(last_response.status).to eq status_code
@@ -53,6 +54,14 @@ RSpec.describe "exceptions_app" do
           expect(json).to eq({status_code: 404, reason_phrase: "Not Found", response_message: 'custom message'}.stringify_keys)
           expect(last_response.status).to eq status_code
         end
+      end
+    end
+    context 'css' do
+      let(:request) { get "/#{status_code}", {}, 'HTTP_ACCEPT' => 'text/css' }
+
+      it do
+        expect(body).not_to include "<p>"
+        expect(last_response.status).to eq status_code
       end
     end
   end
