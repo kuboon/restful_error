@@ -12,8 +12,9 @@ module RestfulError
       @status_code = status.code
       @reason_phrase = status.reason_phrase
       @response_message = @exception.try(:response_message) || RestfulError.localized_phrase(@exception.class.name, status) || nil
-
       render status: status.code, formats: request.format.symbol
+    rescue ActionView::MissingTemplate
+      render status: status.code, formats: :text
     end
   end
 end
